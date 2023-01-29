@@ -12,19 +12,26 @@
     <button type="button" onclick="init()">Start</button>
     <button type="button" onclick="predict()">Predict</button>
     <button id="switchButton">Switch Image</button>
-    <img src="notTv.png" alt="" id="tv">
+    <img src="notTv.png" alt="" id="notTv" style="display:none;">
+    
 
 <script>
   const switchButton = document.querySelector("#switchButton");
-  const image = document.querySelector("#image");
+  const image = document.querySelector("#tv");
   let currentImage = "tv.png";
   switchButton.addEventListener("click", function() {
     if (currentImage === "tv.png") {
+        image.src = "tv.png";
+        image.style.display = "none";
       image.src = "notTv.png";
       currentImage = "notTv.png";
+      image.style.display = "block";
     } else {
+        image.src = "notTv.png";
+        image.style.display = "none";
       image.src = "tv.png";
       currentImage = "tv.png";
+      image.style.display = "block";
     }
   });
 
@@ -62,12 +69,21 @@
     // run the webcam image through the image model
     async function predict() {
         // predict can take in an image, video or canvas html element
-        const prediction = await model.predict(document.getElementById('tv'));
+        if (currentImage === "tv.png") {
+            const prediction = await model.predict(document.getElementById('tv'));
         for (let i = 0; i < maxPredictions; i++) {
             const classPrediction =
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
             labelContainer.childNodes[i].innerHTML = classPrediction;
         }
+        } else {
+            const prediction = await model.predict(document.getElementById('notTv'));
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+    }
     }
 </script>
 </body>
